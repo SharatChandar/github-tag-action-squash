@@ -32,6 +32,11 @@ export default async function main() {
   const customReleaseRules = core.getInput('custom_release_rules');
   const shouldFetchAllTags = core.getInput('fetch_all_tags');
   const commitSha = core.getInput('commit_sha');
+  const squashCommit = core.getInput('squash_commit');
+  const squashMessageIdentifier =
+    core.getInput('squash_message_identifier') || '';
+  const squashMessageSeperator =
+    core.getInput('squash_message_seperator') || '\n';
 
   let mappedReleaseRules;
   if (customReleaseRules) {
@@ -122,6 +127,32 @@ export default async function main() {
     core.setOutput('previous_tag', previousTag.name);
 
     commits = await getCommits(previousTag.commit.sha, commitRef);
+
+    if (squashCommit) {
+      let processedCommits: {
+        message: string;
+        hash: string | null;
+      }[] = [];
+      await Promise.all(
+        commits.map(async (commit) => {
+          if (commit) {
+            if (commit?.message?.includes(squashMessageIdentifier)) {
+              let squashCommits = commit.message.split(squashMessageSeperator);
+              squashCommits.forEach((sqCommit) => {
+                processedCommits.push({
+                  message: sqCommit.trim(),
+                  hash: commit.hash,
+                });
+              });
+            } else {
+              processedCommits.push({ ...commit });
+            }
+          }
+        })
+      );
+      commits = processedCommits;
+      core.info(`Squashed Commits processed: ${JSON.stringify(commits)}.`);
+    }
 
     let bump = await analyzeCommits(
       {

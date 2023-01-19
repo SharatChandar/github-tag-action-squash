@@ -1,4 +1,4 @@
-name: "GitHub Tag"
+name: "GitHub Tag Squash"
 description: "Bump and push git tag on merge"
 author: "Mathieu Dutour"
 outputs:
@@ -59,7 +59,18 @@ inputs:
     description: "Do not perform tagging, just calculate next version and changelog, then exit."
     required: false
     default: "false"
-
+  squash_commit:
+    description: "Split merged squash commits into individual"
+    required: false
+    default: "true"
+  squash_message_identifier:
+    description: "Squash commit identifier"
+    required: false
+  squash_message_seperator:
+    description: "Squash commit seperator"
+    required: false
+    default: "\n"
+ 
 runs:
   using: "node16"
   main: "lib/main.js"

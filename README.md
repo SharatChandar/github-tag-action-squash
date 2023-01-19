@@ -65,6 +65,12 @@ jobs:
 
 - **dry_run** _(optional)_ - Do not perform tagging, just calculate next version and changelog, then exit
 
+#### Squash Commits
+
+- **squash_commit** _(optional)_ - Checks for squashed commits using the squash_message_identifier.
+- **squash_message_identifier** _(optional)_ - Unique identifier that can be added to squash commits to distinguish it from other commits.
+- **squash_message_seperator** _(optional)_ - Seperator used to split between the squash commits.
+
 ### 📤 Outputs
 
 - **new_tag** - The value of the newly calculated tag. Note that if there hasn't been any new commit, this will be `undefined`.
